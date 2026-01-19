@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль Dota 2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c1a2d 0%, #152642 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a3a5a;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #e65c5c;
+            font-size: 28px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #e65c5c, #5c8de6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #a0a8c0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        nav a:hover, nav a.active {
+            color: #e65c5c;
+            background-color: rgba(230, 92, 92, 0.1);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background: rgba(22, 34, 57, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid #2a3a5a;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #5c8de6;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            background: #1a2b4a;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .player-rank {
+            display: inline-block;
+            background: linear-gradient(135deg, #5c8de6, #3a5a9e);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5c8de6;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #a0a8c0;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(22, 34, 57, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a3a5a;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a3a5a;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .match-result {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .victory {
+            background: rgba(46, 125, 50, 0.2);
+            border-left: 4px solid #2e7d32;
+        }
+
+        .defeat {
+            background: rgba(211, 47, 47, 0.2);
+            border-left: 4px solid #d32f2f;
+        }
+
+        .result-icon {
+            font-size: 24px;
+        }
+
+        .victory .result-icon {
+            color: #2e7d32;
+        }
+
+        .defeat .result-icon {
+            color: #d32f2f;
+        }
+
+        .result-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .match-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a3a5a;
+        }
+
+        .info-label {
+            color: #a0a8c0;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .hero-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hero-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1a2b4a;
+        }
+
+        .hero-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-details {
+            flex: 1;
+        }
+
+        .hero-name {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .hero-role {
+            color: #a0a8c0;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        .kda-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .kda-item {
+            padding: 10px;
+        }
+
+        .kda-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5c8de6;
+        }
+
+        .kda-label {
+            font-size: 14px;
+            color: #a0a8c0;
+            margin-top: 5px;
+        }
+
+        .grid-2 {
+            grid-column: 1 / -1;
+        }
+        
+        .match-item {
+            margin-bottom: 15px;
+        }
+        
+        .match-history .match-result {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-dragon"></i>
+                <h1>Dota 2 Профиль</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Профиль</a></li>
+                    <li><a href="#">Статистика</a></li>
+                    <li><a href="#">Матчи</a></li>
+                    <li><a href="#">Герои</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="dashboard">
+            <div class="profile-card">
+                <div class="avatar">
+                    <!-- Аватарка игрока -->
+                    <img src="im.jpg" alt="Аватар игрока">
+                </div>
+                <h2 class="player-name">DendiFan2023</h2>
+                <div class="player-rank">Легендарный орел</div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">4,523</div>
+                        <div class="stat-label">MMR</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3,247</div>
+                        <div class="stat-label">Матчи</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">54.8%</div>
+                        <div class="stat-label">Побед</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Последний матч</h3>
+                    </div>
+                    
+                    <div class="match-result victory">
+                        <div class="result-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="result-text">ПОБЕДА</div>
+                    </div>
+                    
+                    <div class="match-info">
+                        <div class="info-item">
+                            <span class="info-label">Длительность:</span>
+                            <span class="info-value">42:15</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Режим:</span>
+                            <span class="info-value">Рейтинговый</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Дата:</span>
+                            <span class="info-value">2 часа назад</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Регион:</span>
+                            <span class="info-value">Европа</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/pudge.png" alt="Pudge">
+                        </div>
+                        <div class="hero-details">
+                            <div class="hero-name">Pudge</div>
+                            <div class="hero-role">Роам / Инициатор</div>
+                        </div>
+                    </div>
+                    
+                    <div class="kda-stats">
+                        <div class="kda-item">
+                            <div class="kda-value">12</div>
+                            <div class="kda-label">УБИЙСТВА</div>
+                        </div>
+                        <div class="kda-item">
+                            <div class="kda-value">4</div>
+                            <div class="kda-label">СМЕРТИ</div>
+                        </div>
+                        <div class="kda-item">
+                            <div class="kda-value">18</div>
+                            <div class="kda-label">ПОМОЩИ</div>
+                        </div>
+                        <div class="kda-item">
+                            <div class="kda-value">3.0</div>
+                            <div class="kda-label">K/D/A</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Статистика побед</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="winChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card grid-2">
+                    <div class="card-header">
+                        <h3 class="card-title">История матчей</h3>
+                    </div>
+                    <div class="match-history">
+                        <div class="match-item">
+                            <div class="match-result victory">
+                                <div class="result-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="result-text">Победа · 38:12 · Anti-Mage</div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-result defeat">
+                                <div class="result-icon">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="result-text">Поражение · 45:23 · Invoker</div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-result victory">
+                                <div class="result-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="result-text">Победа · 52:07 · Crystal Maiden</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация графика
+        const ctx = document.getElementById('winChart').getContext('2d');
+        const winChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                datasets: [{
+                    label: 'Процент побед',
+                    data: [52, 48, 60, 55, 58, 62, 54],
+                    borderColor: '#5c8de6',
+                    backgroundColor: 'rgba(92, 141, 230, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 40,
+                        max: 70,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#a0a8c0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#a0a8c0'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
